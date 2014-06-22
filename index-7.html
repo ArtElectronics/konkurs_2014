@@ -1,0 +1,143 @@
+<!DOCTYPE HTML>
+<html lang="en">
+<head>
+	<title>Задание</title>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="img/favicon.ico" type="image/x-icon">
+    <link rel="shortcut icon" href="img/favicon.ico" type="image/x-icon" />
+    <meta name="description" content="Your description">
+    <meta name="keywords" content="Your keywords">
+    <meta name="author" content="Dmitry Shamin">
+    <link rel="stylesheet" href="js/jquery-upload-file.css">
+ 	<link rel="stylesheet" href="css/bootstrap.css">
+    <link rel="stylesheet" href="css/style.css">
+	<link rel="stylesheet" href="css/preview.css">
+	<script src="js/include_script.js"></script>
+  	<!--[if lt IE 9]>
+	   	<script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+	    <link href="css/ie.css" rel="stylesheet">
+    <![endif]-->
+
+</head>
+<body>
+<!--content wrapper-->
+	<div id="wrapper">
+		<section class="container">
+			<div class="dynamicContent">
+				<!--content-->
+                <div class="inner">
+                    <div class="row">
+                        <div class="span7 offset5">
+                          <h4>Форма участника конкурса</h4>
+                            <p>Для подачи своих работ  на кокурс заполните форму ниже. Обратите внимание, что поля год
+                                рождения, курс и e-mail являются обязательными. На кокурс можно подавать до 10 файлов,
+                                каждый размером не более 5Мб.</p>
+                            <form id="form1">
+
+                                <label class="name pull-left">
+                                    <input type="text" name="name" value="Фамилия и имя:">
+                                    <span class="empty">*Это обязательное поле.</span> </label>
+
+                                <label class="pull-left">
+                                    <select id="year" name="year"></select>
+                                    <script>
+                                        for(var i=1990;i<=2000;i++) {
+                                            $("#year").append( $('<option value="' + i + '">' + i + '</option>'));
+                                        }
+                                    </script>
+                                    <span class="empty">*Это обязательное поле.</span> </label>
+
+                                <label class="vuz pull-left">
+                                    <input type="text" name="vuz" value="ВУЗ:">
+                                </label>
+
+                                <label class="pull-left">
+                                    <select id="kurs" name="kurs">
+                                        <option>1 курс</option>
+                                        <option>2 курс</option>
+                                        <option>3 курс</option>
+                                        <option>4 курс</option>
+                                        <option>5 курс</option>
+                                        <option>6 курс</option>
+
+                                    </select>
+                                </label>
+                                <label class="phone pull-left">
+                                    <input type="text" name="phone" value="Телефон:">
+                                </label>
+
+                                <label class="email pull-left">
+                                    <input type="text" name="email" value="E-mail:">
+                                    <span class="empty">*Это обязательное поле.</span> </label>
+
+                                <label class="message pull-left">
+                                    <textarea name="message">Комментарий:</textarea>
+                                </label>
+                                <div class="clearfix"></div>
+                                <div id="fileuploader">Загрузить файлы</div>
+                            </form>
+                          <p class="">
+                          </p>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <br/><br/><br/>
+                        <div class="span7 offset5">
+                            <a href="http://students.autodesk.ru/"><img src="img/autodesk.gif" title="Студенческое сообщество Autodesk"><br/>
+                            Студенческое сообщество Autodesk</a>
+                        </div>
+                    </div>
+                    
+                </div>
+			</div>
+		</section>
+	</div>
+	<script src="js/bootstrap.js"></script>
+<script type="text/javascript">
+    jQuery('#form1').forms();
+</script>
+<script>
+$(document).ready(function()
+{
+    var filenames = [];
+	$("#fileuploader").uploadFile({
+        multiple:true,
+	    url:"upload.php",
+	    fileName:"myfile",
+        maxFileCount:10,
+        maxFileSize: 5 * 1024 * 1024,
+        dynamicFormData: function()
+        {
+            var form = $('#form1').serializeArray();
+            var data = {};
+            for (var i in form) {
+                if (form[i].name == 'name' && (form[i].value == 'Фамилия и имя:' || form[i].value == '')) {
+                    alert('Необходимо указать фамилию и имя');
+                    throw new Error("stop");
+                }
+                if (form[i].name == 'email' && (form[i].value == 'E-mail:' || form[i].value == '')) {
+                    alert('Необходимо указать e-mail');
+                    throw new Error("stop");
+                }
+                data[form[i].name] = form[i].value;
+            }
+            return data;
+        },
+        onError: function(files, status, errMsg, xhr) {
+            var obj = $.parseJSON(xhr.responseText);
+            alert(obj.error);
+        },
+        onSuccess: function(files, data, xhr) {
+            var obj = $.parseJSON(data);
+            filenames.push(obj[0]);
+        },
+        afterUploadAll: function() {
+            alert('Анкета и файлы ' + filenames.join(', ') + ' успешно загружены!');
+            location.reload();
+        }
+    });
+});
+</script>
+</body>
+</html>

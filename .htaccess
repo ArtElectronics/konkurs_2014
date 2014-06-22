@@ -1,0 +1,2 @@
+AddDefaultCharset utf-8
+AddType application/x-httpd-php .htm .html .php
